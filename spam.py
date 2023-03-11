@@ -21,6 +21,8 @@ pg.init()
 sc = pg.display.set_mode([RES, RES])
 clock = pg.time.Clock()
 font_score = pg.font.SysFont('Arial', 25)
+font_end = pg.font.SysFont('Arial', 66, bold=True)
+img = pg.image.load('1.jpg').convert()
 
 def close_game():
     for event in pg.event.get():
@@ -35,6 +37,7 @@ def draw_start_menu():
     sc.blit(title, (RES/2 - title.get_width()/2, RES/2 - title.get_height()/2))
     sc.blit(start_button, (RES/2 - start_button.get_width()/2, RES/2 + start_button.get_height()/2))
     pg.display.update()
+
 
 while True:
     for event in pg.event.get():
