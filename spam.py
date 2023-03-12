@@ -54,9 +54,8 @@ while True:
             player_y = 400
             game_state = "game"
             game_over = False
-
     if game_state == "game":
-        sc.fill(pg.Color('black'))
+        sc.blit(img, (0, 0))
         # drawing snake, apple
         [pg.draw.rect(sc, pg.Color('green'), (i, j, SIZE - 1, SIZE - 1)) for i, j in snake]
         pg.draw.rect(sc, pg.Color('red'), (*apple, SIZE, SIZE))
