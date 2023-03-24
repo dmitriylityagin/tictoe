@@ -45,16 +45,43 @@ classes = {
         }
     }
 }
+data = {}
+def file_progress_read():
+    global data
+    try:
+        with open("info.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except BaseException:
+        print("Файл сохранения не найден - будет создан новый. Предыдйщий прогресс утерян.")
+        data = {
+
+        }
+        for name in enemy_names:
+            data[name] = {
+                "победы": 0,
+                "поражения": 0
+            }
+    return data
 
 
+"""- skill + 10, - win/lose + 5 point/health"""
 def init_person(name: str, is_enemy: bool = False) -> dict:
+    file_progress_read()
     if is_enemy:
         person = {'Класс': role[random.choice(list(role.keys()))]}
     else:
         person = {'Класс': role[input('Введите роль: 1-Воин, 2-Лучник, 3-Маг\n')]}
-    
-    person.update({'характеристики': classes[person['Класс']]})
+    heal = classes[person['Класс']]['здоровье']
     person.update({'имя': name})
+    for key in data:
+        if key == person['имя']:
+            lvlu = data[key]['победы']
+            lvld = data[key]['поражения']
+            res = lvlu - lvld
+            if res > 0:
+                heal += 5
+    person.update({'характеристики': classes[person['Класс']]})
+    person['характеристики']['здоровье'] = heal
 
     print(f"{person['имя']} - {person['Класс']}, имеет характеристики: {person['характеристики']}")
     return person
@@ -110,20 +137,8 @@ proceed()
 clear()
 
 battle(player, enemy)
-try:
+file_progress_read()
 
-   with open("info.json", "r", encoding="utf-8") as f:
-       data = json.load(f)
-except BaseException:
-    print("Файл сохранения не найден - будет создан новый. Предыдйщий прогресс утерян.")
-    data = {
-
-    }
-    for name in enemy_names:
-        data[name] = {
-        "победы": 0,
-        "поражения": 0
-                      }
 if player["имя"] not in data:
     data.update({player["имя"]: {
         "победы": 0,
