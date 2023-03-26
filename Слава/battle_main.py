@@ -72,6 +72,9 @@ def init_person(name: str, is_enemy: bool = False) -> dict:
     else:
         person = {'Класс': role[input('Введите роль: 1-Воин, 2-Лучник, 3-Маг\n')]}
     heal = classes[person['Класс']]['здоровье']
+    print(classes[person["Класс"]]["навыки"])
+    skill = list(classes[person["Класс"]]["навыки"].keys())
+    print(classes[person["Класс"]]["навыки"][skill[0]])
     person.update({'имя': name})
     for key in data:
         if key == person['имя']:
@@ -79,14 +82,16 @@ def init_person(name: str, is_enemy: bool = False) -> dict:
             lvld = data[key]['поражения']
             res = lvlu - lvld
             if res > 0:
+                classes[person["Класс"]]["навыки"][skill[0]] += 10
                 heal += 5
+
     person.update({'характеристики': classes[person['Класс']]})
     person['характеристики']['здоровье'] = heal
 
     print(f"{person['имя']} - {person['Класс']}, имеет характеристики: {person['характеристики']}")
     return person
 
-    
+
 def attack(enemy1: dict, enemy2: dict) -> None:
     print(f"{enemy1['имя']} атакует {enemy2['имя']}!")
     time.sleep(delay)
@@ -164,4 +169,3 @@ print(data)
 
 with open("info.json", "w", encoding="utf-8") as f:
     json.dump(data, f, ensure_ascii=False)
-
