@@ -1,1 +1,163 @@
+import random
+import os
+import colorama
+
+white = colorama.Fore.WHITE
+green = colorama.Fore.GREEN
+red = colorama.Fore.RED
+blue = colorama.Fore.BLUE
+yellow = colorama.Fore.YELLOW
+cyan = colorama.Fore.CYAN
+bright = colorama.Style.BRIGHT
+names = ['Доктор', 'Летающий', 'Профессор', 'Скучный', 'Мега', 'Железный', 'Голодный', 'Капитан', 'Быстрый', 'Мистер',
+         'Горячий', 'Звездный', 'Космический', 'Просто', 'Восхитительный', 'Непобедимый']
+surnames = ['слесарь', 'мухомор', 'пепел', 'лемур', 'шаман', 'пельмень', 'слизень', 'алхимик', 'крот', 'фикус',
+            'кролик', 'танцор', 'пингвин', 'викинг', 'паук', 'плащ']
+
+
+def propuski():
+    print(f'{white}-----------------------------------------------------------------------------------------------------------------------------------------')
+
+
+def get_random_name():
+    the_name = random.choice(names) + ' ' + random.choice(surnames)
+    return the_name
+
+
+def is_valid(text: str, is_role: bool = False) -> bool:
+    if len(text) == 0:
+        print('Ошибка ввода. Вы ввели пустую строку.')
+        return False
+    elif text not in '123' and is_role == True:
+        print('Ошибка ввода. Вы ввели не правильное значение. Введите числа от 1 до 3.')
+        return False
+    else:
+        return True
+
+
+def get_player_name() -> str:
+    while True:
+        player_name = input(f"{bright}{white}Как зовут твоего {green}героя?\n")
+        is_ok = is_valid(player_name)
+        if is_ok:
+            return player_name
+
+
+role = {
+    '1': 'Воин',
+    '2': 'Лучник',
+    '3': 'Маг'
+}
+
+classes = {
+    'Воин': {
+        'здоровье': 100,
+        'атака': 50,
+        'защита': 40,
+        'навыки': {
+            'щит': 20
+        }
+    },
+    'Лучник': {
+        'здоровье': 70,
+        'атака': 80,
+        'защита': 25,
+        'навыки': {
+            'убежать': 10
+        }
+    },
+    'Маг': {
+        'здоровье': 50,
+        'атака': 90,
+        'защита': 15,
+        'навыки': {
+            'магический щит': 45,
+            'лечение': 20
+        }
+    }
+}
+
+
+def init_person(name: str, is_enemy: bool = False) -> dict[str, str | dict[str, int | dict]]:
+    if is_enemy:
+        person = {'класс': role[random.choice(list(role.keys()))]}
+    else:
+        while True:
+            choice = input(f'{bright}{white}Введите класс:\n {blue}1-воин\n 2-лучник\n 3-маг\n')
+            if is_valid(text=choice, is_role=True):
+                break
+        person = {'класс': role[choice]}
+    person.update({'характеристики': classes[person['класс']]})
+    person.update({'имя': name})
+    propuski()
+    if not is_enemy:
+        print(
+            f"{green}{person['имя']}-{blue}{person['класс']}{bright}{white}, имеет характеристики: {person['характеристики']}")
+    else:
+        print(
+            f"{red}{person['имя']}-{blue}{person['класс']}{bright}{white}, имеет характеристики: {person['характеристики']}")
+    return person
+
+
+# Твоя функция is_valid() уже импортирована, просто вызови ее
+
+# Допиши код везде, где стоит "..."
+
+
+player = init_person(name=get_player_name())
+enemy = init_person(name=get_random_name(), is_enemy=True)
+
+
+def attack_enemy(enemy1: dict[str, str | dict], enemy2: dict[str, str | dict], type) -> None:
+    if type == 1:
+        print(f"{red}{enemy1['имя']} {white}атакует {green}{enemy2['имя']}!")
+    else:
+        print(f"{green}{enemy1['имя']} {white}атакует {red}{enemy2['имя']}!")
+    damage = enemy1['характеристики']['атака'] - enemy2['характеристики']['защита']
+    if damage < 0:
+        damage = 1
+    enemy2['характеристики']['здоровье'] -= damage
+    if enemy2['характеристики']['здоровье']<0:
+        enemy2['характеристики']['здоровье']=0
+    if type == 1:
+        print(
+            f"{red}{enemy1['имя']}{white} наносит {damage} урона и у {green}{enemy2['имя']}{white} остается {cyan}{enemy2['характеристики']['здоровье']}{white} здоровья!")
+    else:
+        print(
+            f"{green}{enemy1['имя']}{white} наносит {damage} урона и у {red}{enemy2['имя']} {white}остается {cyan}{enemy2['характеристики']['здоровье']}{white} здоровья!")
+
+
+def apply_skill(enemy):
+    rand = random.randint(0, 9)
+    if rand > 6:
+        skill = random.choice(list(enemy['характеристики']['навыки'].keys()))  # Выбирает случайный навык
+        enemy['характеристики']['здоровье'] += enemy['характеристики']['навыки'][skill]
+        print(f"{enemy['имя']} применяет способность {skill}!")
+
+
+def clear():
+    return os.system('cls')
+
+
+def enter_to_continue():
+    input(f'{white}Нажмите {cyan}Enter {white}для продолжения')
+
+
+def fight_for_the_win(attacker: dict[str, str | dict], defender: dict[str, str | dict]) -> bool:
+    while True:
+        propuski()
+        if attacker['характеристики']['здоровье'] > 0:
+            attack_enemy(attacker, defender, 2)
+        else:
+            print(f"{green}{attacker['имя']} {bright}{white}потерпел поражение!")
+            return False
+        if defender['характеристики']['здоровье'] > 0:
+            attack_enemy(defender, attacker, 1)
+        else:
+            print(f"{red}{defender['имя']} {bright}{white}потерпел поражение!")
+            return True
+        enter_to_continue()
+
+
+fight_for_the_win(player, enemy)
 
