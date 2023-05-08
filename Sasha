@@ -1,0 +1,17 @@
+class Reactangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.p = 2 * height + 2 * width
+        print('Прямоугольник построен!!!!!!!!!!!!!!')
+
+
+square = Reactangle(width=(int(input('Введите ширину прямоугольника: '))),
+                    height=(int(input('Введите ширину прямоугольника: '))))
+reactangle1 = Reactangle(width=(int(input('Введите ширину прямоугольника: '))),
+                         height=(int(input('Введите ширину прямоугольника: '))))
+reactangle2 = Reactangle(width=(int(input('Введите ширину прямоугольника: '))),
+                         height=(int(input('Введите ширину прямоугольника: '))))
+print(square.p)
+print(reactangle1.p)
+print(reactangle2.p)
