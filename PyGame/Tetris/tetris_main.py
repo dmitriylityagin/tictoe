@@ -1,3 +1,5 @@
+import random
+
 import pygame as pg
 from random import choice, randrange
 from copy import deepcopy
@@ -26,23 +28,25 @@ figures_pos = [[(-1, 0), (-2, 0), (0, 0), (1, 0)],
 figures = [[pg.Rect(x + W // 2, y + 1, 1, 1) for x, y in fig_pos] for fig_pos in figures_pos]
 figure_rect = pg.Rect(0, 0, TILE - 2, TILE - 2)
 
+field = [[0 for i in range(W)] for j in range(H)]
+
 anim_count, anim_speed, anim_limit = 0, 60, 2000
 
-figure = deepcopy(figures[3])
+figure = deepcopy(random.choice(figures))
+
 
 def check_borders():
     if figure[i].x < 0 or figure[i].x > W - 1:
         return False
-    if figure[i].y > H - 1:
+    if figure[i].y > H - 1 or field[figure[i].y][figure[i].x]:
         return False
 
     return True
 
 
 while True:
-    dx = 0
+    dx, rotate = 0, False
     game_sc.fill(pg.Color('green'))
-
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -54,14 +58,14 @@ while True:
                 dx = 1
             elif event.key == pg.K_DOWN:
                 anim_limit = 100
-    #move x
+    # move x
     figure_old = deepcopy(figure)
     for i in range(4):
         figure[i].x += dx
         if not check_borders():
             figure = deepcopy(figure_old)
             break
-    #move y
+    # move y
     anim_count += anim_speed
     if anim_count > anim_limit:
         anim_count = 0
@@ -69,17 +73,30 @@ while True:
         for i in range(4):
             figure[i].y += 1
             if not check_borders():
-                figure = deepcopy(figure_old)
+                for i in range(4):
+                    field[figure_old[i].y][figure_old[i].x] = pg.Color('white')
+                figure = deepcopy(choice(figures))
                 anim_limit = 2000
                 break
 
-    #draw grid
+    # draw grid
     [pg.draw.rect(game_sc, (40, 40, 40), i_rect, 1) for i_rect in grid]
 
-    #draw figure
+    # draw figure
     for i in range(4):
         figure_rect.x = figure[i].x * TILE
         figure_rect.y = figure[i].y * TILE
         pg.draw.rect(game_sc, pg.Color('white'), figure_rect)
+
+
+    # draw field
+    for y, raw in enumerate(field):
+        for x, col in enumerate(raw):
+            if col:
+                figure_rect.x, figure_rect.y = x * TILE, y * TILE
+                pg.draw.rect(game_sc, col, figure_rect)
+
+
+
     pg.display.flip()
     clock.tick(FPS)
