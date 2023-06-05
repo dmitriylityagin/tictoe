@@ -11,7 +11,7 @@ class Button(GameObject):
         self.state = 'normal'
         self.on_click = on_click
 
-        self.text = TextObject(x + padding, y + padding, lambda: text, c.button_text_color, c.font_name, c.font_size)
+        self.text = TextObject(x + padding, y + padding, lambda: text, c.button_text_color, c.button_text_back_color, c.font_name, c.font_size)
 
     @property
     def back_color(self):

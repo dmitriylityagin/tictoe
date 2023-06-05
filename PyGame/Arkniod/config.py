@@ -23,7 +23,8 @@ paddle_speed = 6
 
 status_offset_y = 5
 
-text_color = colors.YELLOW1
+text_color = colors.TEAL
+text_back_color = colors.CYAN2
 initial_lives = 3
 lives_right_offset = 85
 lives_offset = screen_width - lives_right_offset
@@ -43,7 +44,8 @@ sounds_effects = dict(
 
 message_duration = 2
 
-button_text_color = colors.WHITE,
+button_text_color = colors.WHITE
+button_text_back_color = colors.CADETBLUE
 button_normal_back_color = colors.INDIANRED1
 button_hover_back_color = colors.INDIANRED2
 button_pressed_back_color = colors.INDIANRED3

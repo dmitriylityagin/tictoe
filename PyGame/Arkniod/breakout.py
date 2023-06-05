@@ -119,6 +119,7 @@ class Breakout(Game):
                                         c.status_offset_y,
                                         lambda: f'SCORE: {self.score}',
                                         c.text_color,
+                                        c.text_back_color,
                                         c.font_name,
                                         c.font_size)
         self.objects.append(self.score_label)
@@ -126,6 +127,7 @@ class Breakout(Game):
                                         c.status_offset_y,
                                         lambda: f'LIVES: {self.lives}',
                                         c.text_color,
+                                        c.text_back_color,
                                         c.font_name,
                                         c.font_size)
         self.objects.append(self.lives_label)
@@ -269,8 +271,8 @@ class Breakout(Game):
         if self.game_over:
             self.show_message('GAME OVER!', centralized=True)
 
-    def show_message(self, text, color=colors.WHITE, font_name='Arial', font_size=20, centralized=False):
-        message = TextObject(c.screen_width // 2, c.screen_height // 2, lambda: text, color, font_name, font_size)
+    def show_message(self, text, color=colors.WHITE, background = colors.RED1, font_name='Arial', font_size=20, centralized=False):
+        message = TextObject(c.screen_width // 2, c.screen_height // 2, lambda: text, color, background, font_name, font_size)
         self.draw()
         message.draw(self.surface, centralized)
         pygame.display.update()

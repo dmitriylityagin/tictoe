@@ -5,14 +5,16 @@ from random import choice, randrange
 from copy import deepcopy
 
 W, H = 10, 20
-TILE = 35
+TILE = 30
 GAME_RES = W * TILE, H * TILE
-RES = 750, 940
+RES = 900, 650
 FPS = 60
 
 pg.init()
-game_sc = pg.display.set_mode(GAME_RES)
-# game_sc = pg.Surface(GAME_RES)
+
+sc = pg.display.set_mode(RES)
+# game_sc = pg.display.set_mode(GAME_RES)
+game_sc = pg.Surface(GAME_RES)
 clock = pg.time.Clock()
 
 grid = [pg.Rect(x * TILE, y * TILE, TILE, TILE) for x in range(W) for y in range(H)]
@@ -34,6 +36,17 @@ anim_count, anim_speed, anim_limit = 0, 60, 2000
 
 figure = deepcopy(random.choice(figures))
 
+main_font = pg.font.Font('font/font.ttf', 65)
+font = pg.font.Font('font/font.ttf', 45)
+
+title_tetris = main_font.render('TETRIS', True, pg.Color('darkorange'))
+title_score = font.render('score:', True, pg.Color('green'))
+title_record = font.render('record:', True, pg.Color('purple'))
+
+get_color = lambda: (randrange(30, 256), randrange(30, 256), randrange(30, 256))
+
+score, lines = 0, 0
+scores = {0: 0, 1: 100, 2: 300, 3: 700, 4: 1500}
 
 def check_borders():
     if figure[i].x < 0 or figure[i].x > W - 1:
@@ -46,7 +59,9 @@ def check_borders():
 
 while True:
     dx, rotate = 0, False
-    game_sc.fill(pg.Color('green'))
+    sc.fill(pg.Color('black'))
+    sc.blit(game_sc, (20, 20))
+    game_sc.fill(pg.Color('blue'))
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -58,6 +73,8 @@ while True:
                 dx = 1
             elif event.key == pg.K_DOWN:
                 anim_limit = 100
+            elif event.key == pg.K_UP:
+                rotate = True
     # move x
     figure_old = deepcopy(figure)
     for i in range(4):
@@ -79,15 +96,43 @@ while True:
                 anim_limit = 2000
                 break
 
+    # rotate
+    center = figure[0]
+    figure_old = deepcopy(figure)
+    if rotate:
+        for i in range(4):
+            x = figure[i].y - center.y
+            y = figure[i].x - center.x
+            figure[i].x = center.x - x
+            figure[i].y = center.y + y
+            if not check_borders():
+                figure = deepcopy(figure_old)
+                break
+
+    # check lines
+    line, lines = H - 1, 0
+    for row in range(H - 1, -1, -1):
+        count = 0
+        for i in range(W):
+            if field[row][i]:
+                count += 1
+            field[line][i] = field[row][i]
+        if count < W:
+            line -= 1
+        else:
+            anim_speed += 3
+            lines += 1
+    # compute score
+    score += scores[lines]
+
     # draw grid
-    [pg.draw.rect(game_sc, (40, 40, 40), i_rect, 1) for i_rect in grid]
+    [pg.draw.rect(game_sc, (255, 255, 255), i_rect, 1) for i_rect in grid]
 
     # draw figure
     for i in range(4):
         figure_rect.x = figure[i].x * TILE
         figure_rect.y = figure[i].y * TILE
-        pg.draw.rect(game_sc, pg.Color('white'), figure_rect)
-
+        pg.draw.rect(game_sc, pg.Color('yellow'), figure_rect)
 
     # draw field
     for y, raw in enumerate(field):
@@ -96,7 +141,13 @@ while True:
                 figure_rect.x, figure_rect.y = x * TILE, y * TILE
                 pg.draw.rect(game_sc, col, figure_rect)
 
+    # draw titles
+    sc.blit(title_tetris, (485, 0))
+    sc.blit(title_score, (485, 550))
+    sc.blit(font.render(str(score), True, pg.Color('white')), (650, 550))
 
+    #sc.blit(title_record, (525, 650))
+    #sc.blit(font.render(record, True, pg.Color('gold')), (550, 710))
 
     pg.display.flip()
     clock.tick(FPS)
