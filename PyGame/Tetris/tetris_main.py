@@ -7,13 +7,15 @@ from copy import deepcopy
 W, H = 10, 20
 TILE = 30
 GAME_RES = W * TILE, H * TILE
-RES = 900, 650
+RES = 800, 650
 FPS = 60
 
 pg.init()
 
 sc = pg.display.set_mode(RES)
 # game_sc = pg.display.set_mode(GAME_RES)
+# my_rect.x = size[0] // 2 - my_rect.width // 2 - рисует прямоугольник по центру
+
 game_sc = pg.Surface(GAME_RES)
 clock = pg.time.Clock()
 
@@ -34,7 +36,7 @@ field = [[0 for i in range(W)] for j in range(H)]
 
 anim_count, anim_speed, anim_limit = 0, 60, 2000
 
-figure = deepcopy(random.choice(figures))
+# figure = deepcopy(random.choice(figures))
 
 main_font = pg.font.Font('font/font.ttf', 65)
 font = pg.font.Font('font/font.ttf', 45)
@@ -45,8 +47,12 @@ title_record = font.render('record:', True, pg.Color('purple'))
 
 get_color = lambda: (randrange(30, 256), randrange(30, 256), randrange(30, 256))
 
+figure, next_figure = deepcopy(choice(figures)), deepcopy(choice(figures))
+color, next_color = get_color(), get_color()
+
 score, lines = 0, 0
 scores = {0: 0, 1: 100, 2: 300, 3: 700, 4: 1500}
+
 
 def check_borders():
     if figure[i].x < 0 or figure[i].x > W - 1:
@@ -91,8 +97,9 @@ while True:
             figure[i].y += 1
             if not check_borders():
                 for i in range(4):
-                    field[figure_old[i].y][figure_old[i].x] = pg.Color('white')
-                figure = deepcopy(choice(figures))
+                    field[figure_old[i].y][figure_old[i].x] = color
+                figure, color = next_figure, next_color
+                next_figure, next_color = deepcopy(choice(figures)), get_color()
                 anim_limit = 2000
                 break
 
@@ -132,7 +139,7 @@ while True:
     for i in range(4):
         figure_rect.x = figure[i].x * TILE
         figure_rect.y = figure[i].y * TILE
-        pg.draw.rect(game_sc, pg.Color('yellow'), figure_rect)
+        pg.draw.rect(game_sc, color, figure_rect)
 
     # draw field
     for y, raw in enumerate(field):
@@ -141,13 +148,19 @@ while True:
                 figure_rect.x, figure_rect.y = x * TILE, y * TILE
                 pg.draw.rect(game_sc, col, figure_rect)
 
+    # draw next_figure
+    for i in range(4):
+        figure_rect.x = next_figure[i].x * TILE + 400
+        figure_rect.y = next_figure[i].y * TILE + 290
+        pg.draw.rect(sc, next_color, figure_rect)
+
     # draw titles
-    sc.blit(title_tetris, (485, 0))
-    sc.blit(title_score, (485, 550))
+    sc.blit(title_tetris, (440, 0))
+    sc.blit(title_score, (455, 550))
     sc.blit(font.render(str(score), True, pg.Color('white')), (650, 550))
 
-    #sc.blit(title_record, (525, 650))
-    #sc.blit(font.render(record, True, pg.Color('gold')), (550, 710))
+    # sc.blit(title_record, (525, 650))
+    # sc.blit(font.render(record, True, pg.Color('gold')), (550, 710))
 
     pg.display.flip()
     clock.tick(FPS)

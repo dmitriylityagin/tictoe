@@ -107,7 +107,7 @@ while True:
             y += dy * SIZE
             snake.append((x, y))
             snake = snake[-length:]
-        # eating apple
+        # eating apple привет
         if snake[-1] == apple:
             apple = randrange(SIZE, RES - SIZE, SIZE), randrange(SIZE, RES - SIZE, SIZE)
             length += 1

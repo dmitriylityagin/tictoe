@@ -2,7 +2,30 @@ import os
 import pygame
 import random
 
-from dat extra_life=(colors.GOLD1,
+from datetime import datetime, timedelta
+import time
+from pygame.rect import Rect
+
+from ggame import Game
+from block_draw import Brick
+from ball_draw import Ball
+from player_draw import Paddle
+from text_object import TextObject
+from button import Button
+import config as c
+import colors
+
+special_effects = dict(
+    long_paddle=(colors.ORANGE,
+                 lambda g: g.paddle.bounds.inflate_ip(c.paddle_width // 2, 0),
+                 lambda g: g.paddle.bounds.inflate_ip(-c.paddle_width // 2, 0)),
+    slow_ball=(colors.AQUAMARINE2,
+               lambda g: g.change_ball_speed(-1),
+               lambda g: g.change_ball_speed(1)),
+    tripple_points=(colors.DARKSEAGREEN4,
+                    lambda g: g.set_points_per_brick(3),
+                    lambda g: g.set_points_per_brick(1)),
+    extra_life=(colors.GOLD1,
                 lambda g: g.add_life(),
                 lambda g: None))
 
