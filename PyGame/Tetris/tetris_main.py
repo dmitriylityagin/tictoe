@@ -41,6 +41,9 @@ anim_count, anim_speed, anim_limit = 0, 60, 2000
 main_font = pg.font.Font('font/font.ttf', 65)
 font = pg.font.Font('font/font.ttf', 45)
 
+bg = pg.image.load('img/bg11.jpg').convert()
+game_bg = pg.image.load('img/bg2.jpg').convert()
+
 title_tetris = main_font.render('TETRIS', True, pg.Color('darkorange'))
 title_score = font.render('score:', True, pg.Color('green'))
 title_record = font.render('record:', True, pg.Color('purple'))
@@ -59,15 +62,30 @@ def check_borders():
         return False
     if figure[i].y > H - 1 or field[figure[i].y][figure[i].x]:
         return False
-
     return True
+
+def get_record():
+    try:
+        with open('record') as f:
+            return f.readline()
+    except FileNotFoundError:
+        with open('record', 'w') as f:
+            f.write('0')
+            return 0
+
+
+def set_record(record, score):
+    rec = max(int(record), score)
+    with open('record', 'w') as f:
+        f.write(str(rec))
 
 
 while True:
+    record = get_record()
     dx, rotate = 0, False
-    sc.fill(pg.Color('black'))
+    sc.blit(bg, (0, 0))
     sc.blit(game_sc, (20, 20))
-    game_sc.fill(pg.Color('blue'))
+    game_sc.blit(game_bg, (0, 0))
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -133,7 +151,7 @@ while True:
     score += scores[lines]
 
     # draw grid
-    [pg.draw.rect(game_sc, (255, 255, 255), i_rect, 1) for i_rect in grid]
+    [pg.draw.rect(game_sc, (47, 47, 62), i_rect, 1) for i_rect in grid]
 
     # draw figure
     for i in range(4):
@@ -158,9 +176,21 @@ while True:
     sc.blit(title_tetris, (440, 0))
     sc.blit(title_score, (455, 550))
     sc.blit(font.render(str(score), True, pg.Color('white')), (650, 550))
+    sc.blit(title_record, (455, 450))
+    sc.blit(font.render(record, True, pg.Color('gold')), (650, 450))
 
-    # sc.blit(title_record, (525, 650))
-    # sc.blit(font.render(record, True, pg.Color('gold')), (550, 710))
+    # game over
+    for i in range(W):
+        if field[0][i]:
+            set_record(record, score)
+            field = [[0 for i in range(W)] for i in range(H)]
+            anim_count, anim_speed, anim_limit = 0, 60, 2000
+            score = 0
+            for i_rect in grid:
+                pg.draw.rect(game_sc, get_color(), i_rect)
+                sc.blit(game_sc, (20, 20))
+                pg.display.flip()
+                clock.tick(200)
 
     pg.display.flip()
     clock.tick(FPS)
