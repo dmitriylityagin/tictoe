@@ -52,7 +52,7 @@ def draw_start_menu():
     sc.fill(pg.Color('black'))
     font = pg.font.SysFont('arial', 40)
     title = font.render('Super Spam ™', True, (255, 255, 255))
-    start_button = font.render('Press space to start game', True, (255, 255, 255))
+    start_button = font.render('Start', True, (255, 255, 255))
     sc.blit(title, (RES / 2 - title.get_width() / 2, RES / 2 - title.get_height() / 2))
     sc.blit(start_button, (RES / 2 - start_button.get_width() / 2, RES / 2 + start_button.get_height() / 2))
     pg.display.update()
@@ -100,14 +100,12 @@ while True:
         sc.blit(render_score, (5, 5))
         # snake movement
         speed_count += 1
-        render_speed = font_score.render(f'SPEED: {speed_count}', 1, pg.Color('orange'))
-        sc.blit(render_speed, (500, 5))
         if not speed_count % snake_speed:
             x += dx * SIZE
             y += dy * SIZE
             snake.append((x, y))
             snake = snake[-length:]
-        # eating apple привет
+        # eating apple
         if snake[-1] == apple:
             apple = randrange(SIZE, RES - SIZE, SIZE), randrange(SIZE, RES - SIZE, SIZE)
             length += 1
@@ -144,4 +142,3 @@ while True:
         elif key[pg.K_q]:
             pg.quit()
 pg.quit()
-

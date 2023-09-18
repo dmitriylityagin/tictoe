@@ -48,7 +48,7 @@ button_text_color = colors.WHITE
 button_text_back_color = colors.CADETBLUE
 button_normal_back_color = colors.INDIANRED1
 button_hover_back_color = colors.INDIANRED2
-button_pressed_back_color = colors.INDIANRED  3
+button_pressed_back_color = colors.INDIANRED3
 
 menu_offset_x = 20
 menu_offset_y = 300
